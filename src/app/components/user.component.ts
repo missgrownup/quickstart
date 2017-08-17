@@ -1,29 +1,11 @@
 import { Component } from '@angular/core';
+import { PostsService } from '../services/posts.service';
 
 @Component({
-  selector: 'user',
-  template: `
-    <h1>Hello {{name}}</h1>
-    <p><strong>Email:</strong> {{email}} </p>
-    <p><strong>Address:</strong> {{address.street}} {{address.city}}, {{address.state}} </p>
-    <button (click)="toggleHobbies()">{{showHobbies ? "Hide Hobbies" : "Show Hobbies" }}</button>
-    <div *ngIf="hobbies.length">
-        <h3>Hobbies</h3>
-        <ul>
-            <li *ngFor="let hobby of hobbies; let i = index">
-                {{hobby}} <button (click)="deleteHobby(i)">Delete this hobby</button>
-            </li>
-        </ul>
-        <form (submit)="addHobby(hobby.value)">
-            <label>Add Hobby</label><br/>
-            <input type="text" name="hobby" #hobby /><br/>
-        </form>
-    </div>
-    <form>
-        <label for="name">Name</label><br/>
-        <input type="text" name="name" [(ngModel)]="name"/><br/>
-    </form>
-`,
+    moduleId: module.id,
+    selector: 'user',
+    templateUrl: 'user.component.html',
+    providers: [PostsService]
 })
 
 export class UserComponent  { 
@@ -32,8 +14,9 @@ export class UserComponent  {
     address: address;
     hobbies: string[];
     showHobbies: boolean;
+    posts: Post[];
 
-    constructor() {
+    constructor(private postsService: PostsService) {
         this.name = 'Jamie';
         this.email = 'jamjamduan@gmail.com';
         this.address = {
@@ -43,6 +26,10 @@ export class UserComponent  {
         }
         this.hobbies = ['Diving', 'Camping', 'Hiking'];
         this.showHobbies = true;
+
+        this.postsService.getPosts().subscribe(posts => {
+            this.posts = posts;
+        });
     }
 
     toggleHobbies() {
@@ -62,4 +49,10 @@ interface address {
     street: string;
     city: string;
     state: string;
+}
+
+interface Post {
+    id: number;
+    title: string;
+    body: string;
 }
